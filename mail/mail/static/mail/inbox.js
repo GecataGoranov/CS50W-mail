@@ -20,14 +20,14 @@ function compose_email(email_id) {
   // Make the nav menu link active
   var navbar_items = document.querySelectorAll(".item");
   navbar_items.forEach(element => {
-    if(element.className === "nav-link h4 item active"){
-      element.className = "nav-link h4 item";
+    if(element.className === "nav-link h4 item flex-sm-fill text-sm-center active"){
+      element.className = "nav-link h4 flex-sm-fill text-sm-center item";
     }
   })
-  document.querySelector("#compose").className = "nav-link h4 item active"
+  document.querySelector("#compose").className = "nav-link h4 item flex-sm-fill text-sm-center active"
 
   // Clear out composition fields
-  if(email_id == null){
+  if(email_id == null){4
     document.querySelector('#compose-recipients').value = '';
     document.querySelector('#compose-subject').value = '';
     document.querySelector('#compose-body').value = '';
