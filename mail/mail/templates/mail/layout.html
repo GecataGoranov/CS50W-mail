@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Mail{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'mail/styles.css' %}">
+        {% block script %}
+        {% endblock %}
+    </head>
+    <body>
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark flex-column flex-sm-row">
+            <div class="container">
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item mt-2 mb-1 mr-2">
+                            <a class="nav-link h4 item flex-sm-fill text-sm-center" href="#inbox" id="inbox">Inbox</a>
+                        </li>
+                        <li class="nav-item mt-2 mb-1 mx-2">
+                            <a class="nav-link h4 item flex-sm-fill text-sm-center" href="#compose" id="compose">Compose</a>
+                        </li>
+                        <li class="nav-item mt-2 mb-1 mx-2">
+                            <a class="nav-link h4 item flex-sm-fill text-sm-center" href="#sent" id="sent">Sent</a>
+                        </li>
+                        <li class="nav-item mt-2 mb-1 mx-2">
+                            <a class="nav-link h4 item flex-sm-fill text-sm-center" href="#archive" id="archive">Archived</a>
+                        </li>
+                        <li class="nav-item mt-2 mb-1 mx-2">
+                            <a class="nav-link h4 item flex-sm-fill text-sm-center" href="{% url 'logout' %}">Log out</a>
+                        </li>
+                    </ul>
+                    <span class="navbar-text text-white h2 mt-1">
+                        {{ request.user.email }}
+                    </span>
+                </div>
+            </div>
+        </nav>
+        <div style="height:100px;"></div>
+        <div class="container-lg container-fluid">
+            {% block body %}
+            {% endblock %}
+        </div>
+    </body>
+</html>
