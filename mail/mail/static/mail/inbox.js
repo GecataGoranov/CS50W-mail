@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archive').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click',() => compose_email(null));
 
   // By default, load the inbox
   load_mailbox('inbox');
 });
 
-function compose_email() {
+function compose_email(email_id) {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
@@ -27,15 +27,27 @@ function compose_email() {
   document.querySelector("#compose").className = "nav-link h4 item active"
 
   // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  if(email_id == null){
+    document.querySelector('#compose-recipients').value = '';
+    document.querySelector('#compose-subject').value = '';
+    document.querySelector('#compose-body').value = '';
+  }
+  else{
+    fetch(`emails/${email_id}`)
+    .then(response => response.json())
+    .then(email => {
+      document.querySelector("#compose-recipients").value = email.sender;
+      document.querySelector("#compose-subject").value = `Re: ${email.subject}`;
+      document.querySelector("#compose-body").value = `On ${email.timestamp} ${email.sender} wrote: ${email.body}`;
+    })
+  }
 
   // Upload the submitted form to the API
   document.querySelector("#compose-form").addEventListener("submit", () =>{
     var recipients = document.querySelector("#compose-recipients").value;
     var subject = document.querySelector("#compose-subject").value;
     var body = document.querySelector("#compose-body").value;
+
 
     fetch("/emails", {
       method: "POST",
@@ -155,23 +167,26 @@ function read_email(id, mailbox){
     let archive_button = document.createElement("button");
     if(mailbox === "inbox"){
       archive_button.innerHTML = "Archive";
-      archive_button.className = "btn btn-primary mb-2";
+      archive_button.className = "btn btn-primary mb-2 mr-2";
     }
     else if(mailbox === "archive"){
       archive_button.innerHTML = "Unarchive";
-      archive_button.className = "btn btn-secondary mb-2";
+      archive_button.className = "btn btn-secondary mb-2 mr-2";
     }
     else{
       archive_button = null;
     }
 
-    
+    let reply_button = document.createElement("button");
+    reply_button.className = "btn btn-primary mb-2";
+    reply_button.innerHTML = "Reply";
+    reply_button.addEventListener("click",() => compose_email(id))
+
     if(archive_button){
-      read_jumbotron.append(sender_element, recipients_element, after_recipients_element, subject_element, after_subject_element, body_element, after_body_element, archive_button, timestamp_element,);
+      read_jumbotron.append(sender_element, recipients_element, after_recipients_element, subject_element, after_subject_element, body_element, after_body_element, archive_button, reply_button, timestamp_element,);
     }
     else{
-      read_jumbotron.append(sender_element, recipients_element, after_recipients_element, subject_element, after_subject_element, body_element, after_body_element, timestamp_element,);
-
+      read_jumbotron.append(sender_element, recipients_element, after_recipients_element, subject_element, after_subject_element, body_element, after_body_element, reply_button, timestamp_element,);
     }
 
     archive_button.addEventListener("click", () => {
@@ -182,7 +197,7 @@ function read_email(id, mailbox){
             archived: true,
           })
         })
-        archive_button.className = "btn btn-secondary mb-2"
+        archive_button.className = "btn btn-secondary mb-2 mr-2"
         archive_button.innerHTML = "Unarchive"
       }
       else{
@@ -192,7 +207,7 @@ function read_email(id, mailbox){
             archived: false,
           })
         })
-        archive_button.className = "btn btn-primary mb-2"
+        archive_button.className = "btn btn-primary mb-2 mr-2"
         archive_button.innerHTML = "Archive"
       }
     })
@@ -205,5 +220,3 @@ function read_email(id, mailbox){
     })
   })
 }
-
-// Test comment
